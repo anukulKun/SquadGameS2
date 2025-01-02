@@ -1,0 +1,24 @@
+{
+  "name": "server-professor",
+  "version": "0.0.1",
+  "description": "Squid-Game Backend",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "professorabhay",
+  "license": "MIT",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "ioredis": "^5.4.2",
+    "mongoose": "^8.9.3",
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
+  }
+}
