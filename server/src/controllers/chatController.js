@@ -4,7 +4,9 @@ export async function getMainChat(_req, res) {
   try {
     const mainChat = await Chat.findOne({ participants: "main_group" });
     if (!mainChat) {
-      return res.status(404).json({ error: "Main chat not found" });
+      const newChat = new Chat({ participants: ["main_group"] });
+      await newChat.save();
+      return res.status(201).json(newChat);
     }
     res.status(200).json(mainChat);
   } catch (error) {
@@ -44,6 +46,11 @@ export async function sendMessage(req, res) {
         return res.status(404).json({ error: "Chat not found" });
       }
 
+      // check if the sender is a participant of the chat
+      if (!chat.participants.includes(sender)) {
+        return res.status(403).json({ error: "You are not a participant of this chat" });
+      }
+
       chat.messages.push({ sender, content });
       await chat.save();
       return res.status(200).json(chat);
@@ -69,7 +76,6 @@ export async function startPrivateChat(req, res) {
   try {
     const existingChat = await Chat.findOne({
       participants: { $all: participants },
-      $size: participants.length,
     });
 
     if (existingChat) {

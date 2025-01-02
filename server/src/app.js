@@ -19,8 +19,10 @@ app.use(
       // Allow *.vercel.app or localhost:5173
       if (
         origin &&
-        (origin.match(/^https?:\/\/(.*\.)?vercel\.app$/) ||
-          origin === "http://localhost:5173")
+        (
+          origin.match(/^https?:\/\/(.*\.)?vercel\.app$/) ||
+          origin === "http://localhost:5173" 
+        )
       ) {
         callback(null, true);
       } else {
