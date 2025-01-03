@@ -7,6 +7,7 @@ import { Server } from "socket.io";
 
 import chatRoutes from "./routers/chatRoutes.js";
 import userRoutes from "./routers/userRoutes.js";
+import shapeRoutes from "./routers/shapesRoutes.js";
 
 export const app = express();
 
@@ -42,8 +43,12 @@ app.get("/", (_req, res) => {
   res.send("Server is working fine");
 });
 
+// TODO: set routes as protected
 app.use("/api/chat", chatRoutes);
 app.use("/api/user", userRoutes);
+
+// Game Routes
+app.use("/api/games/shapes", shapeRoutes);
 
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
