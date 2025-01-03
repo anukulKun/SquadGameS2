@@ -17,6 +17,9 @@ export async function getMainChat(_req, res) {
 
 export async function sendMessage(req, res) {
   const { chatId, sender, content, type } = req.body;
+  const io = req.app.get("socketio");
+
+  console.log(io.sockets.adapter.rooms);
 
   if (!sender || !content || !type) {
     return res.status(400).json({ error: "Invalid message data" });
@@ -30,6 +33,8 @@ export async function sendMessage(req, res) {
         // If no lobby chat exists, create one
         const newChat = new Chat({ participants: ["lobby"], messages: [{ sender, content }] });
         await newChat.save();
+
+        io.to("lobby").emit("publicMessage", { sender, content });
 
         return res.status(201).json(newChat);
       } else {
@@ -53,6 +58,8 @@ export async function sendMessage(req, res) {
 
       chat.messages.push({ sender, content });
       await chat.save();
+
+      io.to(chatId).emit("privateMessage", { sender, content });
       return res.status(200).json(chat);
     }
 

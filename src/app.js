@@ -18,10 +18,10 @@ app.use(
     origin: (origin, callback) => {
       // Allow *.vercel.app or localhost:5173
       if (
-        origin &&
-        (
-          origin.match(/^https?:\/\/(.*\.)?vercel\.app$/) ||
-          origin === "http://localhost:5173" 
+        process.env.NODE_ENV === "development" ||
+        ( origin &&
+          ( origin.match(/^https?:\/\/(.*\.)?vercel\.app$/) ||
+            origin === "http://localhost:5173" )
         )
       ) {
         callback(null, true);
@@ -50,30 +50,29 @@ io.on("connection", (socket) => {
 
   const lobby = "lobby";
   socket.join(lobby);
-
   console.log("User joined lobby:", socket.id);
 
+  // Listen for public messages
   socket.on("publicMessage", (data) => {
     io.to(lobby).emit("publicMessage", data);
   });
 
-  socket.on("joinRoom", (room) => {
-    socket.join(room);
-    console.log("User joined room:", room);
-  });
-
+  // Listen for private messages
   socket.on("privateMessage", (data) => {
     const { chatId, message } = data;
     io.to(chatId).emit("privateMessage", message);
   });
 
-  //socket.on("message", (data) => {
-  //  io.emit("message", data); 
-  //});
+  // Listen for joining rooms
+  socket.on("joinRoom", (room) => {
+    socket.join(room);
+    console.log("User joined room:", room);
+  });
 
-
+  // Disconnect event
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
   });
 });
 
+app.set("socketio", io);
